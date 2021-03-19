@@ -13,14 +13,6 @@ pipeline {
           }   
         }
       }  
-      post {
-        success {
-          stash name: 'app', includes: '*.js, public/**, views/*, Dockerfile'
-        }
-        always {
-          junit 'res.xml'
-        }
-      } 
     }
     stage('Build and Push Image') {
       when {
