@@ -20,7 +20,6 @@ pipeline {
         branch 'master'
       }
       steps {
-        checkout scm
         echo "TODO - build and push image"
       }
     }
