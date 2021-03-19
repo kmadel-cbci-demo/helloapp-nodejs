@@ -1,38 +1,15 @@
+// @Image(cloudbees/codeship-jenkinsfile-step:nodejs)
 pipeline {
-  agent none
-  options { 
-    buildDiscarder(logRotator(numToKeepStr: '2'))
-    skipDefaultCheckout true
-  }
+  agent any
   stages {
     stage('Web Tests') {
-      agent {
-        kubernetes {
-          label 'nodejs-devoptics'
-          yamlFile 'nodejs-pod.yaml'
-        }
-      }
-      when {
-        beforeAgent true
-        branch 'development'
-      }
       stages {
         stage('Nodejs Setup') {
           steps {
-            checkout scm
-            container('nodejs') {
-              sh """
-                npm i -S express pug
-                node ./hello.js &
-              """
-            }
-          }   
-        }
-        stage('Testcafe') {
-          steps {
-            container('testcafe') {
-              sh '/opt/testcafe/docker/testcafe-docker.sh "chromium --no-sandbox" tests/*.js -r xunit:res.xml'
-            }
+            sh """
+              npm i -S express pug
+              node ./hello.js &
+            """
           }   
         }
       }  
@@ -46,12 +23,6 @@ pipeline {
       } 
     }
     stage('Build and Push Image') {
-      agent {
-        kubernetes {
-          label 'nodejs'
-          yamlFile 'nodejs-pod.yaml'
-        }
-      }
       when {
         beforeAgent true
         branch 'master'
